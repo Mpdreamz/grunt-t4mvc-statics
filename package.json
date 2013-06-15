@@ -1,7 +1,7 @@
 {
   "name": "grunt-t4mvc-statics",
   "description": "Renders T4MVC C# class strongly typing your static folder(s)",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "homepage": "https://github.com/Mpdreamz/grunt-t4mvc-statics",
   "author": {
     "name": "Martijn Laarman",
