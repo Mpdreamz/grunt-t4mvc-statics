@@ -1,6 +1,6 @@
 # grunt-t4mvc-statics
 
-> Renders T4MVC C# class strongly typing your static folder(s)
+> Grunt task to generate a T4MVC C# class to strongly type your static folder(s)
 
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
