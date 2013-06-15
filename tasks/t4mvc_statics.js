@@ -53,7 +53,7 @@ module.exports = function(grunt) {
     // Iterate over all specified file groups.
     var safeName = function(name) {
       var name = name.replace(/[-\., \s]+/g, "_");
-      name = name.replace(/(\d+)/, "_$1");
+      name = name.replace(/^(\d+)/, "_$1");
       return name;
     } 
     var outputPromises = _.map(this.files, function(f) {
