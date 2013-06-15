@@ -22,7 +22,6 @@ module.exports = function(grunt) {
 
   var fileStart = function(generated) {
       generated.push("#pragma warning disable 1591");
-      generated.push("#region T4MVC");
       
       generated.push("using System;");
       generated.push("using System.Diagnostics;");
@@ -41,7 +40,6 @@ module.exports = function(grunt) {
 
       generated.push("namespace Files");
       generated.push("{");
-      generated.push('  [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]');
   }
   
 
@@ -54,7 +52,7 @@ module.exports = function(grunt) {
 
     // Iterate over all specified file groups.
     var safeName = function(name) {
-      return name.replace(/[-\.,]/g, "_");
+      return name.replace(/[-\., \s]+/g, "_");
     } 
     var outputPromises = _.map(this.files, function(f) {
       var generated = [];
@@ -88,11 +86,8 @@ module.exports = function(grunt) {
           dir = normalizeDir(dir);
           var path = dir + "/" + fileInfo.file;
           var dirName = safeName(_.last(dir.split("/")));
-          writeLog(depth, 'private const string URLPATH = "~/' + dir + '";');
-          writeLog(depth, 'public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }');
-          writeLog(depth, 'public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }');
           writeLog(depth, '[GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]');
-          writeLog(depth, 'public static class '+ dirName);
+          writeLog(depth, 'public static class @'+ dirName);
 
           writeLog(depth, '{')
         };
@@ -101,6 +96,18 @@ module.exports = function(grunt) {
           var path = dir + "/" + fileInfo.file;
           writeLog(depth, '}')
         };
+        var writeFileStart = function(dir, fileInfo, depth) {
+          dir = normalizeDir(dir);
+          
+          var path = dir + "/" + fileInfo.file;
+          var safe = safeName(fileInfo.file);
+          writeLog(depth, 'private const string URLPATH = "~/' + dir + '";');
+          writeLog(depth, 'public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }');
+          writeLog(depth, 'public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }');
+          
+         
+        }
+
         var writeFile = function(dir, fileInfo, depth) {
           dir = normalizeDir(dir);
           
@@ -116,6 +123,7 @@ module.exports = function(grunt) {
 
         walk(filepath, {
           writeDir: writeDir,
+          writeFileStart: writeFileStart,
           writeDirEnd: writeDirEnd,
           writeFile: writeFile,
           walkEnd: walkEnd
@@ -125,7 +133,6 @@ module.exports = function(grunt) {
       });
       return Q.allSettled(folderPromises).then(function() {
         generated.push("}");
-
         // Write the destination file.
         grunt.file.write(f.dest, generated.join("\r\n"));
 
@@ -162,6 +169,7 @@ module.exports = function(grunt) {
          var path = dir + "/" + fileInfo.file;
          dive(path, depth);
       });
+      actions.writeFileStart(dir, fileInfo, depth);
       _.each(listing.file, function(fileInfo) {
         actions.writeFile(dir, fileInfo, depth);
       });
