@@ -155,6 +155,7 @@ module.exports = function(grunt) {
       depth++;
 
       var list = fs.readdirSync(dir);
+      list = _.sortBy(list, function (l) { return l; });
       var fileInfo = { file : "" };
       fileInfo.stat = fs.statSync(dir);
 
