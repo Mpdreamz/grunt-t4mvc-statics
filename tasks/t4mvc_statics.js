@@ -136,7 +136,7 @@ module.exports = function(grunt) {
       return Q.allSettled(folderPromises).then(function() {
         generated.push("}");
         // Write the destination file.
-        grunt.file.write(f.dest, generated.join("\r\n"));
+        grunt.file.write(f.dest, generated.join(grunt.util.linefeed));
 
         // Print a success message.
         grunt.log.writeln('File "' + f.dest + '" created.');
